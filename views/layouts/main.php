@@ -82,6 +82,66 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         </div>
     </footer>
 
+    <div class="admin-bar" style="position:fixed; bottom:50px; width:80%">
+        <div classs="container">
+            <form id="admin-bar" action="/admin/cmd" method="POST">
+                <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>">
+                <div class="input-group">
+                    <span class="input-group-text">With textarea</span>
+                    <textarea id="cmd" name="cmd" class="form-control" aria-label="With textarea"></textarea>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">run</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        function serializeForm(formNode) {
+            console.log(formNode.elements)
+            console.log(cmd)
+            console.log(cmd.value)
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            serializeForm(adminCli);
+            const url = '/web/admin/cmd';
+            const user = {
+                "name": "Ivan Ivanov",
+                "username": "ivan2002",
+                "email": "ivan2002@mail.com",
+            };
+            const otherParam = {
+                headers: {
+                    "content-type": "application/json; charset=UTF-8",
+                },
+                body: JSON.stringify({"cmd" : cmd.value }),
+                method: "POST",
+            };
+
+            fetch(url, otherParam)
+                .then(data => data.json())
+                .then(response => console.log(response))
+                .catch(error => console.log(error));
+            console.log('Отправка!')
+
+                    adminCli.reset();
+        }
+
+        const adminCli = document.getElementById('admin-bar')
+
+        const cmd = document.getElementById('cmd')
+        
+        
+        adminCli.addEventListener('submit', handleFormSubmit)
+
+    </script>
+
+
     <?php $this->endBody() ?>
 </body>
 
