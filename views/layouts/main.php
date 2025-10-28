@@ -82,21 +82,62 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         </div>
     </footer>
 
-    <div class="admin-bar" style="position:fixed; bottom:50px; width:80%">
+    <div class="admin-bar">
         <div classs="container">
             <form id="admin-bar" action="/admin/cmd" method="POST">
-                <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>">
+                <input type="hidden" name="_csrf" value="<?= Yii::$app->request->getCsrfToken() ?>">
                 <div class="input-group">
-                    <span class="input-group-text">With textarea</span>
-                    <textarea id="cmd" name="cmd" class="form-control" aria-label="With textarea"></textarea>
-                </div>
-
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">run</button>
+                    <textarea id="cmd" name="cmd" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-control" aria-label="With textarea"></textarea>
+                    <span class="input-group-text bg-dark"><button type="submit"
+                            class="btn btn-primary">>></button></span>
                 </div>
             </form>
         </div>
     </div>
+
+    <div id="output-window">
+        <span id="close-output-window">X</span>
+    </div>
+
+    <style>
+        .admin-bar {
+            position: fixed;
+            bottom: 50px;
+            width: 100%
+        }
+
+        .admin-bar textarea,
+        .admin-bar textarea:focus {
+            background-color: black;
+            color: greenyellow;
+            border: none;
+            box-shadow: none;
+            height: 186px;
+        }
+
+        #output-window {
+            background-color: black;
+            color: white;
+            height: 60%;
+            width: 80%;
+            border: 2px solid green;
+            margin-left: 10%;
+            position: fixed;
+            top: 100px;
+            overflow-y: auto;
+        }
+
+        #close-output-window {
+            display: block;
+            border: 1px solid green;
+            width: 35px;
+            color: green;
+            text-align: center;
+            position: relative;
+            left: 95%;
+            cursor: default;
+        }
+    </style>
 
     <script>
 
@@ -109,35 +150,72 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         function handleFormSubmit(event) {
             event.preventDefault();
             serializeForm(adminCli);
-            const url = '/web/admin/cmd';
+            const url = '/web/admin-cmd/cmd';
             const user = {
                 "name": "Ivan Ivanov",
                 "username": "ivan2002",
                 "email": "ivan2002@mail.com",
             };
-            const otherParam = {
+
+            let Command = cmd.value.split("\n").pop();
+
+            const param = {
                 headers: {
                     "content-type": "application/json; charset=UTF-8",
                 },
-                body: JSON.stringify({"cmd" : cmd.value }),
+                body: JSON.stringify({ "cmd": Command }),
                 method: "POST",
             };
 
-            fetch(url, otherParam)
+            fetch(url, param)
                 .then(data => data.json())
-                .then(response => console.log(response))
+                .then(response => handleResponse(response))
                 .catch(error => console.log(error));
             console.log('Отправка!')
+            // adminCli.reset();
+            // terminalText('Command sent');
+        }
 
-                    adminCli.reset();
+
+        function handleResponse(response) {
+            if (response.terminalMessage != '') {
+                terminalText(response.terminalMessage)
+            }
+
+            if( response.jsCommand != ''){
+                eval(response.jsCommand)
+            }
+        }
+
+        function terminalText(text) {
+            let cmd = document.getElementById("cmd");
+            cmd.value += '\r\n' + text + '\r\n';
+            cmd.scrollTop = cmd.scrollHeight;
         }
 
         const adminCli = document.getElementById('admin-bar')
 
         const cmd = document.getElementById('cmd')
-        
-        
+        adminCli.onkeydown = function (e) {
+            if (e.keyCode == 13) {
+                handleFormSubmit(e);
+
+            }
+        };
+
         adminCli.addEventListener('submit', handleFormSubmit)
+
+        const outputWindow = document.getElementById('output-window');
+        function closeOutputWindow() {
+            outputWindow.style.display = 'none';
+        }
+
+        function openOutputWindow() {
+            outputWindow.style.display = 'block';
+        }
+
+        const closeOutputWindowBtn = document.getElementById('close-output-window')
+        closeOutputWindowBtn.addEventListener('click', closeOutputWindow)
 
     </script>
 
