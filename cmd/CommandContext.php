@@ -21,6 +21,7 @@ class CommandContext
             $this->query = $query;
             if ($query->get('callYesNo')) {
                   $this->params['callYesNo'] = $query->getQueryString();
+                  return;
             }
             $this->params = $this->query->parseParams();
       }
