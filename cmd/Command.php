@@ -23,7 +23,7 @@ abstract class Command
         return ['terminalMessage' => $message];
     }
 
-    protected function checkReqiredParams($inputParams)
+    protected function checkRequiredParams($inputParams)
     {
         $inputParamsKeys = array_keys($inputParams);
         $missedParams = [];

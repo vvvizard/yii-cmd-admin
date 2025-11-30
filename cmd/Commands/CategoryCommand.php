@@ -19,8 +19,7 @@ class CategoryCommand extends Command
         } else {
             $this->handleContext($context);
         }
-
-        $this->jsonResponse(['terminalMessage' => 'Do you really want to test this ? [Yes, No] ']);
+        
         return true;
     }
 
@@ -37,7 +36,7 @@ class CategoryCommand extends Command
     protected function create(CommandContext $context)
     {
         $command = new CategoryCreateCommand();
-        $command->checkReqiredParams($context->getParams());
+        $command->checkRequiredParams($context->getParams());
         // $category = new Category();
 
     }
