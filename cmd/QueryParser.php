@@ -13,6 +13,7 @@ class QueryParser
    public function __construct($query)
    {
       $this->query = $query;
+      $this->parseParams();
       $this->checkFlash();
    }
 
@@ -61,6 +62,9 @@ class QueryParser
       return $this->query;
    }
 
+   public function getParams(){
+      return $this->params;
+   }
 
 
 }

@@ -13,7 +13,7 @@ class CommandContext
       protected $query;
       public function __construct(QueryParser $query)
       {
-              $this->initQuery($query);
+            $this->initQuery($query);
       }
 
       protected function initQuery($query)
@@ -23,7 +23,7 @@ class CommandContext
                   $this->params['callYesNo'] = $query->getQueryString();
                   return;
             }
-            $this->params = $this->query->parseParams();
+            $this->params = $this->query->getParams();
       }
 
       public function addParam(string $key, $val)
@@ -36,7 +36,13 @@ class CommandContext
             return $this->params[$key] ?? null;
       }
 
-      public function getParams(){
+      public function getFirstParamKey()
+      {
+           return  \strval(array_key_first($this->params))  ?? null;
+      }
+
+      public function getParams()
+      {
             return $this->params;
       }
 
