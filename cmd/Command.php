@@ -2,10 +2,12 @@
 namespace app\cmd;
 
 use app\cmd\CommandContext;
+use \yii\db\ActiveRecord;
 use Yii;
 abstract class Command
 {
     public $requiredParams = [];
+    protected ActiveRecord $model;
 
     abstract public function execute(CommandContext $context): bool;
 
@@ -38,7 +40,11 @@ abstract class Command
         }
 
         return true;
+    }
 
+    public function setModel(ActiveRecord $model)
+    {
+        $this->model = $model;
     }
 
 }

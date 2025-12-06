@@ -3,6 +3,7 @@
 namespace app\cmd\Commands;
 
 use app\cmd\{Command, CommandContext};
+use app\cmd\Commands\Category\CategoryCreateCommand;
 use app\models\Category;
 use Yii;
 
@@ -15,9 +16,10 @@ class CategoryCommand extends Command
     {
         $method = \strval($context->getFirstParamKey());
         if (method_exists($this, $method)) {
+            $this->model = new Category();
             $this->$method($context);
         } else {
-            $this->handleContext($context);
+            throw new \Exception("No such command for : ". $this->title);
         }
         
         return true;
@@ -37,6 +39,8 @@ class CategoryCommand extends Command
     {
         $command = new CategoryCreateCommand();
         $command->checkRequiredParams($context->getParams());
+        $command->setModel($this->model);
+        $command->execute($context);
         // $category = new Category();
 
     }
