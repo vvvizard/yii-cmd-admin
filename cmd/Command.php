@@ -27,10 +27,10 @@ abstract class Command
 
     protected function checkRequiredParams($inputParams)
     {
-        $inputParamsKeys = array_keys($inputParams);
+       // $inputParamsKeys = array_keys($inputParams);
         $missedParams = [];
         foreach ($this->requiredParams as $param) {
-            if (!\array_key_exists($param, $inputParamsKeys)) {
+            if (!\array_key_exists($param, $inputParams)) {
                 $missedParams[] = $param;
             }
         }
