@@ -19,13 +19,14 @@ class CategoryCreateCommand extends Command
         if (!$this->model instanceof ActiveRecord || empty($this->model)) {
             throw new \Exception("wrong or empty model property");
         }
-        
+
         $this->model->title = $context->get('title');
         $this->model->description = $context->get('description');
-        $this->model->save(); 
+        $this->model->save();
 
-        $this->terminalMessage('category created with id: ' . $this->model->id);
+        $this->jsonResponse($this->terminalMessage('category created with id: ' . $this->model->id));
         
+
         return true;
     }
 
