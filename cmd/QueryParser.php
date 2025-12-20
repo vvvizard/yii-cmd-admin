@@ -31,10 +31,11 @@ class QueryParser
 
    public function parseParams()
    {
-      $pattern = '/(\-{2})\w+((=\w+($| ))|($| ))/';
+      $patternForQuotes = "((\"|\').*?(\"|\'))";
+      $patternNoQuotes = "(\w+($| ))";
+      $pattern = '/(\-{2})\w+((=(' . $patternForQuotes . '|' . $patternNoQuotes . '))|($| ))/';
       preg_match_all($pattern, $this->query, $matches);
       foreach ($matches[0] as $key => $param) {
-
          $param = trim(str_replace('--', '', $param));
          if (str_contains($param, '=')) {
             $parsedParam = explode("=", $param);
@@ -62,7 +63,8 @@ class QueryParser
       return $this->query;
    }
 
-   public function getParams(){
+   public function getParams()
+   {
       return $this->params;
    }
 
