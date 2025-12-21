@@ -38,6 +38,7 @@ class QueryParser
       foreach ($matches[0] as $key => $param) {
          $param = trim(str_replace('--', '', $param));
          if (str_contains($param, '=')) {
+            $param = str_replace(["\'", "\""], "", $param);
             $parsedParam = explode("=", $param);
             $this->params[$parsedParam[0]] = $parsedParam[1];
          } else {
