@@ -33,3 +33,5 @@ tests/_support/_generated
 /.vagrant
 /.osp
 /.vscode
+config/db.php
+config/db.php
