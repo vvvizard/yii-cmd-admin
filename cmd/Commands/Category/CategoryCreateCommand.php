@@ -24,7 +24,7 @@ class CategoryCreateCommand extends Command
         $this->model->description = $context->get('description');
         $this->model->save();
 
-        $this->jsonResponse($this->terminalMessage('category created with id: ' . $this->model->id));
+        $this->jsonResponse($this->terminalMessage('category created with id: ' . Yii::$app->db->getLastInsertID()));
         
 
         return true;
