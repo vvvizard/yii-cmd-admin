@@ -12,7 +12,7 @@ class ArticleCreateCommand extends Command
 
     private $title = 'ArticleCreate';
 
-    public $requiredParams = ['title', 'content', 'categoryID', 'categoryTitle'];
+    public $requiredParams = ['title', 'content'];
 
     public function execute(CommandContext $context): bool
     {
@@ -21,11 +21,21 @@ class ArticleCreateCommand extends Command
         }
 
         $this->model->title = $context->get('title');
-        if(!empty($context->get('categoryTitle')))
-        {
-          $category = Category::find()->where(['title'=>$context->get('çategoryTitle')])->one();  
+        if (!empty($context->get('categoryTitle'))) {
+            $category = Category::find()->where(['title' => $context->get('categoryTitle')])->one();
+            $this->model->category_id = $category->id;
         }
+
+        if (!empty($context->get('categoryID'))) {
+            $this->model->category_id = $context->get('categoryID');
+        }
+
         $this->model->content = $context->get('content');
+        $userId = $context->get('userId');
+        if (!$userId) {
+            throw new \Exception("User ID is required");
+        }
+        $this->model->user_id = $userId;
         $this->model->save();
 
         $this->jsonResponse($this->terminalMessage('article created with id: ' . Yii::$app->db->getLastInsertID()));

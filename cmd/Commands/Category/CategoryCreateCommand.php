@@ -20,12 +20,22 @@ class CategoryCreateCommand extends Command
             throw new \Exception("wrong or empty model property");
         }
 
+        if (!empty($context->get('parentCategoryTitle'))) {
+            $category = Category::find()->where(['title' => $context->get('parentCategoryTitle')])->one();
+            $this->model->parent_category_id = $category->id;
+        }
+
+        if (!empty($context->get('parentCategoryID'))) {
+            $this->model->parent_category_id = $context->get('parentCategoryID');
+        }
+
+
         $this->model->title = $context->get('title');
         $this->model->description = $context->get('description');
         $this->model->save();
 
         $this->jsonResponse($this->terminalMessage('category created with id: ' . Yii::$app->db->getLastInsertID()));
-        
+
 
         return true;
     }
