@@ -15,10 +15,11 @@ class Factory
 
     protected static function getClass(string $action)
     {
-        $class = __NAMESPACE__ . "\\" . static::$dir . "\\" . ucfirst(strtolower($action)) . static::$type;
+        $class = __NAMESPACE__ . "\\" . static::$dir . "\\" . ucfirst($action) . static::$type;
         if (!class_exists($class)) {
             throw new CommandNotFoundException("command not exist");
         }
+        
         return $class;
     }
 }

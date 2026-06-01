@@ -69,5 +69,4 @@ class QueryParser
       return $this->params;
    }
 
-
 }

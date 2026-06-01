@@ -16,7 +16,7 @@ class CommandFactory extends Factory
     }
 
     public function getFromConfig(array $config){
-
+ 
         return [];
     }
 

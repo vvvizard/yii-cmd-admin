@@ -28,6 +28,7 @@ class AdminCmdController extends Controller
             $query = new QueryParser($data['cmd']);
             $context = new CommandContext($query);
             $cmd = CommandFactory::getCommand($query->getCommandTitle());
+            $cmd->checkRequiredParams($context->getParams());
             $cmd->execute($context);
         } catch (Exception $e) {
             $response = Yii::$app->response;

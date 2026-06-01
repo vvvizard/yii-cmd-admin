@@ -25,7 +25,7 @@ abstract class Command
         return ['terminalMessage' => $message];
     }
 
-    protected function checkRequiredParams($inputParams)
+    public function checkRequiredParams(array $inputParams)
     {
        // $inputParamsKeys = array_keys($inputParams);
         $missedParams = [];

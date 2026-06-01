@@ -14,6 +14,7 @@ class CommandContext
       public function __construct(QueryParser $query)
       {
             $this->initQuery($query);
+            $this->addParam('userId',1); // only for testing
       }
 
       protected function initQuery($query)
