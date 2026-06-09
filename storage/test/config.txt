@@ -1,1 +1,1 @@
-type:category;title:"test test";parent_category_id:2;description:"test catefory from folder";
+type:category;title:"test test";parent_category_id:1;description:"test catefory from folder";

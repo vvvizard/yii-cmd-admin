@@ -2,7 +2,7 @@
 
 namespace app\cmd\Commands;
 
-use app\cmd\{Command, CommandContext};
+use app\cmd\{Command, CommandContext, QueryParser};
 use app\cmd\Commands\Category\CategoryCreateCommand;
 use app\cmd\CommandFactory;
 use app\models\Category;
@@ -15,14 +15,16 @@ class LoadFromFolderCommand extends Command
 
     public $requiredParams = ['folder'];
 
+    // public const STORAGE = Yii::$app->params['rootDir'] . DIRECTORY_SEPARATOR . 'storage';
     public const CONFIG_FILE = 'config.txt';
     public const TYPE_PATTERN = '/type:/';
 
     public function execute(CommandContext $context): bool
     {
-
+        $dir = __DIR__;
         $folder = $context->get('folder');
-        $file = $folder . DIRECTORY_SEPARATOR . self::CONFIG_FILE;
+        $storagePath = Yii::$app->params['rootDir'] . DIRECTORY_SEPARATOR . 'storage';
+        $file = $storagePath . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . 'config.txt';
 
         if (!is_file($file)) {
 
@@ -30,26 +32,59 @@ class LoadFromFolderCommand extends Command
         }
 
         $config = $this->parseConfig($file);
-        $command = (new CommandFactory())->getFromConfig($config);
+        $query = $this->makeQuery($config);
+        $query = new QueryParser($query);
+        $context = new CommandContext($query);
+        $command = CommandFactory::getCommand($query->getCommandTitle());
+        $command->execute($context);
+        //$command = (new CommandFactory())->getFromConfig($config);
 
         return true;
     }
 
     protected function parseConfig($file)
     {
-        $config = file($file);
-        $type = preg_grep(self::TYPE_PATTERN, $config);
+        $content = file_get_contents($file);
 
-        if (empty($type)) {
-
-            throw new \Exception("Required param /type/ not found ");
+        if (empty($content)) {
+            throw new \Exception("Config file is empty: " . $file);
         }
 
-        $result = array_reduce($config, function ($r, $i) {
-            return array_merge($r, [explode(':', $i)[0] => explode(':', $i)[1]]);
-        }, []);
+        $pattern = '/(\w+):("(?:[^"\\\\]|\\\\.)*"|[^\s;]+);?/';
+
+        preg_match_all($pattern, $content, $matches, PREG_SET_ORDER);
+
+        if (empty($matches)) {
+            throw new \Exception("No parameters found in config file");
+        }
+
+        $result = [];
+        foreach ($matches as $match) {
+            $key = $match[1];
+            $value = $match[2];
+
+            if (preg_match('/^"(.*)"$/s', $value, $quotedValue)) {
+                $value = $quotedValue[1];
+            }
+
+            $result[$key] = trim($value);
+        }
+
+        if (!isset($result['type'])) {
+        //    throw new \Exception("Required param 'type' not found in config");
+        }
 
         return $result;
+
+    }
+
+    protected function makeQuery(array $config)
+    {
+        return $config['type']
+            . ' --create --title='
+            . $config['title']
+            . ' --description='
+            . $config['description'];
     }
 
 }
