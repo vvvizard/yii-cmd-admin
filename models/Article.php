@@ -86,4 +86,17 @@ class Article extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+    public function getBlocks()
+    {
+        return $this->hasMany(ArticleBlock::class, ['article_id' => 'id'])
+            ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC]);
+    }
+
+    public function getActiveBlocks()
+    {
+        return $this->hasMany(ArticleBlock::class, ['article_id' => 'id'])
+            ->where(['status' => ArticleBlock::STATUS_ACTIVE])
+            ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC]);
+    }
+
 }
