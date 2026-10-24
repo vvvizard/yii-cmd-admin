@@ -71,7 +71,7 @@ class LoadFromFolderCommand extends Command
         }
 
         if (!isset($result['type'])) {
-        //    throw new \Exception("Required param 'type' not found in config");
+            //    throw new \Exception("Required param 'type' not found in config");
         }
 
         return $result;
@@ -80,11 +80,17 @@ class LoadFromFolderCommand extends Command
 
     protected function makeQuery(array $config)
     {
-        return $config['type']
+        $query = $config['type']
             . ' --create --title='
-            . $config['title']
+            . "\"" . $config['title'] . "\""
             . ' --description='
-            . $config['description'];
+            . "\"" . $config['description'] . "\"";
+
+        $query .= !empty($config['parentCateroryID']) ? " --parentCategoryID=" . $config['parentCategoryID'] : '';
+        $query .= !empty($config['categoryID']) ? " --categoryID=" . $config['categoryID'] : '';
+        $query .= !empty($config['content']) ? " --content=" . '"' . addslashes($config['content']) . '"' : '';
+        return $query;
+
     }
 
 }
